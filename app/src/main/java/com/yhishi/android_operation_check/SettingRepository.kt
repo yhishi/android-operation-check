@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,26 +24,34 @@ class SettingRepository @Inject constructor(
     )
 
 
-    fun saveTestSettingToNormalPreferences() {
-        normalPreferences
-            .edit()
-            .putString("normal-preferences-key", "normal-preferences-value")
-            .apply()
+    suspend fun saveTestSettingToNormalPreferences() {
+        withContext(Dispatchers.IO) {
+            normalPreferences
+                .edit()
+                .putString("normal-preferences-key", "normal-preferences-value")
+                .apply()
+        }
     }
 
-    fun getTestSettingFromNormalPreferences(): String {
-        return normalPreferences.getString("normal-preferences-key", "Nothing") ?: ""
+    suspend fun getTestSettingFromNormalPreferences(): String {
+        return withContext(Dispatchers.IO) {
+            normalPreferences.getString("normal-preferences-key", "Nothing") ?: ""
+        }
     }
 
-    fun saveTestSettingToEncryptedPreferences() {
-        encryptedPreferences
-            .edit()
-            .putString("encrypted-preferences-key", "encrypted-preferences-value")
-            .apply()
+    suspend fun saveTestSettingToEncryptedPreferences() {
+        withContext(Dispatchers.IO) {
+            encryptedPreferences
+                .edit()
+                .putString("encrypted-preferences-key", "encrypted-preferences-value")
+                .apply()
+        }
     }
 
-    fun getTestSettingFromEncryptedNormalPreferences(): String {
-        return encryptedPreferences.getString("encrypted-preferences-key", "Nothing") ?: ""
+    suspend fun getTestSettingFromEncryptedNormalPreferences(): String {
+        return withContext(Dispatchers.IO) {
+            encryptedPreferences.getString("encrypted-preferences-key", "Nothing") ?: ""
+        }
     }
 
     companion object {
