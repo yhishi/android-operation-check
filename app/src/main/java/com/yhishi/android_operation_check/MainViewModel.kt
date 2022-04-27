@@ -21,16 +21,26 @@ class MainViewModel @Inject constructor(
     val encryptedPreferencesValue: StateFlow<String>
         get() = _encryptedPreferencesValue
 
+    private val _preferencesDataStoreValue = MutableStateFlow("")
+    val preferencesDataStoreValue: StateFlow<String>
+        get() = _preferencesDataStoreValue
+
     init {
         viewModelScope.launch {
             settingRepository.saveTestSettingToNormalPreferences()
             settingRepository.saveTestSettingToEncryptedPreferences()
+            settingRepository.saveTestSettingToPreferencesDataStore()
 
             val normalValue = settingRepository.getTestSettingFromNormalPreferences()
             _normalPreferencesValue.value = normalValue
 
             val encryptedValue = settingRepository.getTestSettingFromEncryptedNormalPreferences()
             _encryptedPreferencesValue.value = encryptedValue
+
+            settingRepository.getTestSettingFromPreferencesDataStore()
+                .collect {
+                    _preferencesDataStoreValue.value = it
+                }
         }
     }
 }

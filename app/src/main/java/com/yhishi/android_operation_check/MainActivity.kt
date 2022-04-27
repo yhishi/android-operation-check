@@ -38,5 +38,15 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, "encryptedPreferencesValue = $encryptedPreferencesValue", Toast.LENGTH_LONG).show()
                 }
         }
+
+        lifecycleScope.launch {
+            viewModel.preferencesDataStoreValue
+                .filter {
+                    it.isNotEmpty()
+                }
+                .collect { preferencesDataStoreValue ->
+                    Toast.makeText(this@MainActivity, "preferencesDataStoreValue = $preferencesDataStoreValue", Toast.LENGTH_LONG).show()
+                }
+        }
     }
 }
