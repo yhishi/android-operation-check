@@ -11,9 +11,14 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     init {
         settingRepository.saveTestSettingToNormalPreferences()
+        settingRepository.saveTestSettingToEncryptedPreferences()
     }
 
     fun getTestSettingFromNormalPreferences(): String {
         return settingRepository.getTestSettingFromNormalPreferences()
+    }
+
+    fun getTestSettingFromEncryptedNormalPreferences(): String {
+        return settingRepository.getTestSettingFromEncryptedNormalPreferences()
     }
 }

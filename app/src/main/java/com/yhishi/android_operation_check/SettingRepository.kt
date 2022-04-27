@@ -1,6 +1,8 @@
 package com.yhishi.android_operation_check
 
 import android.content.Context
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKeys
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -9,8 +11,16 @@ import javax.inject.Singleton
 class SettingRepository @Inject constructor(
     @ApplicationContext context: Context
 ) {
-    // SharedPreferences
     private val normalPreferences = context.getSharedPreferences(NORMAL_FILE_NAME, Context.MODE_PRIVATE)
+    private val mainKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+    private val encryptedPreferences = EncryptedSharedPreferences.create(
+        ENCRYPTED_FILE_NAME,
+        mainKeyAlias,
+        context,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
+
 
     fun saveTestSettingToNormalPreferences() {
         normalPreferences
@@ -23,7 +33,19 @@ class SettingRepository @Inject constructor(
         return normalPreferences.getString("normal-preferences-key", "Nothing") ?: ""
     }
 
+    fun saveTestSettingToEncryptedPreferences() {
+        encryptedPreferences
+            .edit()
+            .putString("encrypted-preferences-key", "encrypted-preferences-value")
+            .apply()
+    }
+
+    fun getTestSettingFromEncryptedNormalPreferences(): String {
+        return encryptedPreferences.getString("encrypted-preferences-key", "Nothing") ?: ""
+    }
+
     companion object {
         private const val NORMAL_FILE_NAME = "normal-preferences"
+        private const val ENCRYPTED_FILE_NAME = "encrypted-preferences"
     }
 }
