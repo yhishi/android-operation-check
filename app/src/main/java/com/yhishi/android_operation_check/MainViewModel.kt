@@ -1,7 +1,11 @@
 package com.yhishi.android_operation_check
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -9,16 +13,24 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val settingRepository: SettingRepository,
 ) : ViewModel() {
+    private val _normalPreferencesValue = MutableStateFlow("")
+    val normalPreferencesValue: StateFlow<String>
+        get() = _normalPreferencesValue
+
+    private val _encryptedPreferencesValue = MutableStateFlow("")
+    val encryptedPreferencesValue: StateFlow<String>
+        get() = _encryptedPreferencesValue
+
     init {
-        settingRepository.saveTestSettingToNormalPreferences()
-        settingRepository.saveTestSettingToEncryptedPreferences()
-    }
+        viewModelScope.launch {
+            settingRepository.saveTestSettingToNormalPreferences()
+            settingRepository.saveTestSettingToEncryptedPreferences()
 
-    fun getTestSettingFromNormalPreferences(): String {
-        return settingRepository.getTestSettingFromNormalPreferences()
-    }
+            val normalValue = settingRepository.getTestSettingFromNormalPreferences()
+            _normalPreferencesValue.value = normalValue
 
-    fun getTestSettingFromEncryptedNormalPreferences(): String {
-        return settingRepository.getTestSettingFromEncryptedNormalPreferences()
+            val encryptedValue = settingRepository.getTestSettingFromEncryptedNormalPreferences()
+            _encryptedPreferencesValue.value = encryptedValue
+        }
     }
 }

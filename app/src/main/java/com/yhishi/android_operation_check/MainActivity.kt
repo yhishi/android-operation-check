@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -16,14 +18,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val normalPreferencesValue = viewModel.getTestSettingFromNormalPreferences()
-        Toast.makeText(this, "normalPreferencesValue = $normalPreferencesValue", Toast.LENGTH_LONG).show()
+        lifecycleScope.launch {
+            viewModel.normalPreferencesValue.collect { normalPreferencesValue ->
+                Toast.makeText(this@MainActivity, "normalPreferencesValue = $normalPreferencesValue", Toast.LENGTH_LONG).show()
+            }
+        }
 
-        val encryptedPreferencesValue = viewModel.getTestSettingFromEncryptedNormalPreferences()
-        Toast.makeText(this, "encryptedPreferencesValue = $encryptedPreferencesValue", Toast.LENGTH_LONG).show()
-    }
-
-    companion object {
-        private const val ENCRYPTED_FILE_NAME = "encrypted-preferences"
+        lifecycleScope.launch {
+            viewModel.encryptedPreferencesValue.collect { encryptedPreferencesValue ->
+                Toast.makeText(this@MainActivity, "encryptedPreferencesValue = $encryptedPreferencesValue", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }
