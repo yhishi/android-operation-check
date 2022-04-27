@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 
@@ -19,15 +20,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         lifecycleScope.launch {
-            viewModel.normalPreferencesValue.collect { normalPreferencesValue ->
-                Toast.makeText(this@MainActivity, "normalPreferencesValue = $normalPreferencesValue", Toast.LENGTH_LONG).show()
-            }
+            viewModel.normalPreferencesValue
+                .filter {
+                    it.isNotEmpty()
+                }
+                .collect { normalPreferencesValue ->
+                    Toast.makeText(this@MainActivity, "normalPreferencesValue = $normalPreferencesValue", Toast.LENGTH_LONG).show()
+                }
         }
 
         lifecycleScope.launch {
-            viewModel.encryptedPreferencesValue.collect { encryptedPreferencesValue ->
-                Toast.makeText(this@MainActivity, "encryptedPreferencesValue = $encryptedPreferencesValue", Toast.LENGTH_LONG).show()
-            }
+            viewModel.encryptedPreferencesValue
+                .filter {
+                    it.isNotEmpty()
+                }
+                .collect { encryptedPreferencesValue ->
+                    Toast.makeText(this@MainActivity, "encryptedPreferencesValue = $encryptedPreferencesValue", Toast.LENGTH_LONG).show()
+                }
         }
     }
 }
