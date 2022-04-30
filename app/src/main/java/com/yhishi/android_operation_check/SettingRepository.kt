@@ -1,9 +1,11 @@
 package com.yhishi.android_operation_check
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.security.crypto.EncryptedSharedPreferences
@@ -11,8 +13,10 @@ import androidx.security.crypto.MasterKeys
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -71,9 +75,19 @@ class SettingRepository @Inject constructor(
 
     suspend fun getTestSettingFromPreferencesDataStore(): Flow<String> {
         return withContext(Dispatchers.IO) {
-            context.dataStore.data.map { preferences ->
-                preferences[PREFERENCES_DATA_STORE_KEY] ?: ""
-            }
+            context.dataStore.data
+                .catch { exception ->
+                    // dataStore.data throws an IOException when an error is encountered when reading data
+                    if (exception is IOException) {
+                        Log.e("SettingRepository", "Error reading preferences.", exception)
+                        emit(emptyPreferences())
+                    } else {
+                        throw exception
+                    }
+                }
+                .map { preferences ->
+                    preferences[PREFERENCES_DATA_STORE_KEY] ?: ""
+                }
         }
     }
 
