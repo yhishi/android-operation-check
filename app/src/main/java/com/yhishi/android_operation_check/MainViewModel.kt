@@ -56,10 +56,18 @@ class MainViewModel @Inject constructor(
 
     fun onClickHashButton(input: String) {
         _md5Value.postValue(
-            "MD5ハッシュ値：" + calculateHash(input = input, algorithm = ALGORITHM_MD5)
+            if (input.isEmpty()) {
+                "MD5ハッシュ値："
+            } else {
+                "MD5ハッシュ値：" + calculateHash(input = input, algorithm = ALGORITHM_MD5)
+            }
         )
         _shaValue.postValue(
-            "SHA-256ハッシュ値：" + calculateHash(input = input, algorithm = ALGORITHM_SHA_256)
+            if (input.isEmpty()) {
+                "SHA-256ハッシュ値："
+            } else {
+                "SHA-256ハッシュ値：" + calculateHash(input = input, algorithm = ALGORITHM_SHA_256)
+            }
         )
     }
 
