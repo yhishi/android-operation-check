@@ -1,5 +1,7 @@
 package com.yhishi.android_operation_check
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +29,12 @@ class MainViewModel @Inject constructor(
     val preferencesDataStoreValue: StateFlow<String>
         get() = _preferencesDataStoreValue
 
+    private val _md5Value = MutableLiveData("")
+    val md5Value: LiveData<String> get() = _md5Value
+
+    private val _shaValue = MutableLiveData("")
+    val shaValue: LiveData<String> get() = _shaValue
+
     init {
         viewModelScope.launch {
             settingRepository.saveTestSettingToNormalPreferences()
@@ -47,8 +55,12 @@ class MainViewModel @Inject constructor(
     }
 
     fun onClickHashButton(input: String) {
-        val toMd5 = calculateHash(input = input, algorithm = ALGORITHM_MD5)
-        val toSha = calculateHash(input = input, algorithm = ALGORITHM_SHA_256)
+        _md5Value.postValue(
+            "MD5ハッシュ値：" + calculateHash(input = input, algorithm = ALGORITHM_MD5)
+        )
+        _shaValue.postValue(
+            "SHA-256ハッシュ値：" + calculateHash(input = input, algorithm = ALGORITHM_SHA_256)
+        )
     }
 
     private fun calculateHash(input: String, algorithm: String): String {

@@ -38,5 +38,26 @@
             app:layout_constraintStart_toEndOf="@id/editText"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/md5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@{viewModel.md5Value}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editText"
+            tools:text="MD5ハッシュ値：aaaa" />
+
+        <TextView
+            android:id="@+id/sha256"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.shaValue}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/md5"
+            tools:text="SHA-256ハッシュ値：aaaa" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
