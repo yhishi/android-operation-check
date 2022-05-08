@@ -17,6 +17,7 @@ import javax.inject.Singleton
 class EncryptionWithPreSharedKey @Inject constructor() {
     private var mIV: ByteArray? = null
 
+    // TODO EncryptedValueやPreSharedKeyのような値オブジェクトを作った方が良い
     fun encrypt(
         value: String,
         key: String,
