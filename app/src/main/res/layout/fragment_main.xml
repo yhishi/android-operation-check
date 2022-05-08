@@ -59,6 +59,7 @@
             app:layout_constraintTop_toBottomOf="@id/md5"
             tools:text="SHA-256ハッシュ値：aaaa" />
 
+        <!-- 共通鍵暗号方式を使った暗号化-->
         <EditText
             android:id="@+id/encryptionText"
             android:layout_width="wrap_content"
@@ -78,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:onClick="@{() -> viewModel.onClickEncryptionButton(encryptionText.getText().toString())}"
-            android:text="AESで暗号化"
+            android:text="AESで共通鍵暗号"
             app:layout_constraintBottom_toBottomOf="@id/encryptionText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/encryptionText"
