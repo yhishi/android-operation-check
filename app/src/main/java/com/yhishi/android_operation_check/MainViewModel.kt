@@ -143,7 +143,7 @@ class MainViewModel @Inject constructor(
         private const val ALGORITHM_MD5 = "MD5"
         private const val ALGORITHM_SHA_256 = "SHA-256"
 
-        // TODO 共通鍵がアプリ内に保持しないこと！
+        // TODO 共通鍵は本来、アプリ内に保持しないこと！
         private const val PRE_SHARED_KEY = "kajeoijvaodkalej"
     }
 }
