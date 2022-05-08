@@ -16,6 +16,7 @@ import kotlin.text.Charsets.UTF_8
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val settingRepository: SettingRepository,
+    private val encryption: EncryptionWithPreSharedKey,
 ) : ViewModel() {
     private val _normalPreferencesValue = MutableStateFlow("")
     val normalPreferencesValue: StateFlow<String>
@@ -34,6 +35,12 @@ class MainViewModel @Inject constructor(
 
     private val _shaValue = MutableLiveData("")
     val shaValue: LiveData<String> get() = _shaValue
+
+    private val _encryptedValue = MutableLiveData("")
+    val encryptedValue: LiveData<String> get() = _encryptedValue
+
+    private val _decryptedValue = MutableLiveData("")
+    val decryptedValue: LiveData<String> get() = _decryptedValue
 
     init {
         viewModelScope.launch {
@@ -71,6 +78,25 @@ class MainViewModel @Inject constructor(
         )
     }
 
+    fun onClickEncryptionButton(input: String) {
+        var encryptedValue = ""
+        _encryptedValue.postValue(
+            if (input.isEmpty()) {
+                "暗号化されたテキスト："
+            } else {
+                encryptedValue = encrypt(input = input)
+                "暗号化されたテキスト：$encryptedValue"
+            }
+        )
+        _decryptedValue.postValue(
+            if (input.isEmpty()) {
+                "復号化されたテキスト："
+            } else {
+                "復号化されたテキスト：" + decrypt(encrypted = encryptedValue)
+            }
+        )
+    }
+
     private fun calculateHash(input: String, algorithm: String): String {
         // MD5ハッシュ計算
         val byteArray = MessageDigest.getInstance(algorithm).digest(input.toByteArray(UTF_8))
@@ -79,8 +105,19 @@ class MainViewModel @Inject constructor(
         return byteArray.joinToString(separator = "") { byte -> "%02x".format(byte) }
     }
 
+    private fun encrypt(input: String): String {
+        return encryption.encrypt(value = input, key = PRE_SHARED_KEY)
+    }
+
+    private fun decrypt(encrypted: String): String {
+        return encryption.decrypt(value = encrypted, key = PRE_SHARED_KEY)
+    }
+
     companion object {
         private const val ALGORITHM_MD5 = "MD5"
         private const val ALGORITHM_SHA_256 = "SHA-256"
+
+        // TODO 共通鍵がアプリ内に保持しないこと！
+        private const val PRE_SHARED_KEY = "kajeoijvaodkalej"
     }
 }

@@ -59,5 +59,51 @@
             app:layout_constraintTop_toBottomOf="@id/md5"
             tools:text="SHA-256ハッシュ値：aaaa" />
 
+        <EditText
+            android:id="@+id/encryptionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:autofillHints="@null"
+            android:inputType="text"
+            android:minWidth="100dp"
+            app:layout_constraintEnd_toStartOf="@id/encryptionButton"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sha256" />
+
+        <Button
+            android:id="@+id/encryptionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:onClick="@{() -> viewModel.onClickEncryptionButton(encryptionText.getText().toString())}"
+            android:text="AESで暗号化"
+            app:layout_constraintBottom_toBottomOf="@id/encryptionText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/encryptionText"
+            app:layout_constraintTop_toTopOf="@id/encryptionText" />
+
+        <TextView
+            android:id="@+id/encryptedValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@{viewModel.encryptedValue}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/encryptionText"
+            tools:text="暗号化されたテキスト：aaaa" />
+
+        <TextView
+            android:id="@+id/decryptedValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.decryptedValue}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/encryptedValue"
+            tools:text="復号化されたテキスト：aaaa" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
