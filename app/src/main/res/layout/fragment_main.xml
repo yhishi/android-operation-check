@@ -106,5 +106,52 @@
             app:layout_constraintTop_toBottomOf="@id/encryptedValue"
             tools:text="復号化されたテキスト：aaaa" />
 
+        <!-- Android Keystoreを用いた公開鍵暗号-->
+        <EditText
+            android:id="@+id/encryptionTextWithKeyStore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:autofillHints="@null"
+            android:inputType="text"
+            android:minWidth="100dp"
+            app:layout_constraintEnd_toStartOf="@id/encryptionButtonWithKeyStore"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/decryptedValue" />
+
+        <Button
+            android:id="@+id/encryptionButtonWithKeyStore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:onClick="@{() -> viewModel.onClickEncryptionButtonWithKeyStore(encryptionTextWithKeyStore.getText().toString())}"
+            android:text="Keystoreを用いた公開鍵暗号"
+            app:layout_constraintBottom_toBottomOf="@id/encryptionTextWithKeyStore"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/encryptionTextWithKeyStore"
+            app:layout_constraintTop_toTopOf="@id/encryptionTextWithKeyStore" />
+
+        <TextView
+            android:id="@+id/encryptedValueWithKeyStore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@{viewModel.encryptedValueWithKeyStore}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/encryptionTextWithKeyStore"
+            tools:text="暗号化されたテキスト：aaaa" />
+
+        <TextView
+            android:id="@+id/decryptedValueWithKeyStore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.decryptedValueWithKeyStore}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/encryptedValueWithKeyStore"
+            tools:text="復号化されたテキスト：aaaa" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

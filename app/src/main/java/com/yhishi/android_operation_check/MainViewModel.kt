@@ -17,6 +17,7 @@ import kotlin.text.Charsets.UTF_8
 class MainViewModel @Inject constructor(
     private val settingRepository: SettingRepository,
     private val encryption: EncryptionWithPreSharedKey,
+    private val keyStore: KeyStore,
 ) : ViewModel() {
     private val _normalPreferencesValue = MutableStateFlow("")
     val normalPreferencesValue: StateFlow<String>
@@ -41,6 +42,12 @@ class MainViewModel @Inject constructor(
 
     private val _decryptedValue = MutableLiveData("")
     val decryptedValue: LiveData<String> get() = _decryptedValue
+
+    private val _encryptedValueWithKeyStore = MutableLiveData("")
+    val encryptedValueWithKeyStore: LiveData<String> get() = _encryptedValueWithKeyStore
+
+    private val _decryptedValueWithKeyStore = MutableLiveData("")
+    val decryptedValueWithKeyStore: LiveData<String> get() = _decryptedValueWithKeyStore
 
     init {
         viewModelScope.launch {
@@ -93,6 +100,25 @@ class MainViewModel @Inject constructor(
                 "復号化されたテキスト："
             } else {
                 "復号化されたテキスト：" + decrypt(encrypted = encryptedValue)
+            }
+        )
+    }
+
+    fun onClickEncryptionButtonWithKeyStore(input: String) {
+        var encryptedValue = ""
+        _encryptedValueWithKeyStore.postValue(
+            if (input.isEmpty()) {
+                "暗号化されたテキスト："
+            } else {
+                encryptedValue = keyStore.encrypt(value = input)
+                "暗号化されたテキスト：$encryptedValue"
+            }
+        )
+        _decryptedValueWithKeyStore.postValue(
+            if (input.isEmpty()) {
+                "復号化されたテキスト："
+            } else {
+                "復号化されたテキスト：" + keyStore.decrypt(value = encryptedValue)
             }
         )
     }
