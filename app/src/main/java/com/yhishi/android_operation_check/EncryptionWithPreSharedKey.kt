@@ -2,11 +2,11 @@ package com.yhishi.android_operation_check
 
 import android.util.Base64
 import android.util.Log
-import java.lang.Exception
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import javax.inject.Inject
 import javax.inject.Singleton
 
 
@@ -14,7 +14,7 @@ import javax.inject.Singleton
  * 共通鍵暗号方式を使った暗号化・復号化
  */
 @Singleton
-class EncryptionWithPreSharedKey {
+class EncryptionWithPreSharedKey @Inject constructor() {
     private var mIV: ByteArray? = null
 
     fun encrypt(
@@ -50,7 +50,8 @@ class EncryptionWithPreSharedKey {
             if (secretKey != null) {
                 val ivParameterSpec = IvParameterSpec(mIV)
                 cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec)
-                decrypted = cipher.doFinal(value.toByteArray(Charsets.UTF_8))
+                val decodedValue = Base64.decode(value.toByteArray(), Base64.NO_WRAP)
+                decrypted = cipher.doFinal(decodedValue)
             }
         } catch (e: Exception) {
             Log.d("EncryptionWithPreSharedKey decrypt", "$e")
