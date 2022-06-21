@@ -31,6 +31,16 @@ class MainFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
+        binding.toolbar.inflateMenu(R.menu.toolbar_menu)
+        binding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.cameraImageGallery -> {
+                    true
+                }
+                else -> false
+            }
+        }
+
         lifecycleScope.launch {
             viewModel.normalPreferencesValue
                 .filter {
