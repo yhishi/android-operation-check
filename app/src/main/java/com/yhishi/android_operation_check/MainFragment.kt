@@ -1,5 +1,6 @@
 package com.yhishi.android_operation_check
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +36,7 @@ class MainFragment : Fragment() {
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.cameraImageGallery -> {
+                    startActivity(Intent(requireActivity(), CameraImageGalleryActivity::class.java))
                     true
                 }
                 else -> false
