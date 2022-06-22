@@ -3,6 +3,7 @@ package com.yhishi.android_operation_check
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -34,6 +35,7 @@ class CameraImageGalleryActivity : AppCompatActivity() {
         }
 
     private var cameraUri: Uri? = null
+    private var fieldCameraFile: File? = null
 
     private var resultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -41,10 +43,17 @@ class CameraImageGalleryActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             val data = result.data
             if (data != null) {
-                if (cameraUri != null) {
+                fieldCameraFile?.let { file ->
                     binding.imageView.setImageURI(cameraUri)
-                } else {
-                    Log.d("debug", "cameraUri == null")
+
+                    MediaScannerConnection.scanFile(
+                        this,
+                        arrayOf(file.absolutePath),
+                        arrayOf("image/jpeg"),
+                    ) { path, uri ->
+                        Log.d("hishiii", "scanFile path: $path")
+                        Log.d("hishiii", "scanFile uri: $uri")
+                    }
                 }
             }
         }
@@ -65,7 +74,7 @@ class CameraImageGalleryActivity : AppCompatActivity() {
         val directory: File? = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         Log.d("hishiii", "path: $directory")
         val fileDate = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.JAPAN).format(Date())
-        val fileName = String.format("CameraIntent_%s.jpg", fileDate)
+        val fileName = String.format("CameraIntent_%s.jpeg", fileDate)
 
         val cameraFile = File(directory, fileName)
 
@@ -75,12 +84,16 @@ class CameraImageGalleryActivity : AppCompatActivity() {
             cameraFile,
         )
 
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri)
-        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        Log.d("hishiii", "cameraFile path: ${cameraFile.path}")
+        Log.d("hishiii", "cameraFile absolutePath: ${cameraFile.absolutePath}")
 
-        resultLauncher.launch(intent)
+        if (cameraUri != null) {
+            fieldCameraFile = cameraFile
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri)
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
 
-        Log.d("hishiii", "startActivityForResult()")
+            resultLauncher.launch(intent)
+        }
     }
 }
