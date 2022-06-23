@@ -65,6 +65,7 @@ class CameraImageGalleryActivity : AppCompatActivity() {
 
         binding.getExternalFilesDirButton.setOnClickListener {
             if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                createFileOnGetExternalFilesDir()
                 takePicture()
             }
         }
@@ -74,7 +75,7 @@ class CameraImageGalleryActivity : AppCompatActivity() {
         }
     }
 
-    private fun takePicture() {
+    private fun createFileOnGetExternalFilesDir() {
         // /storage/emulated/0/Android/data/com.yhishi.android_operation_check/files/Pictures/CameraIntent_yyyyMMdd_HHmmss.jpegに保存される
         // アプリ固有のストレージのため、フォトやFilesの画像では確認することができない
         // 参考情報：https://akira-watson.com/android/mediastore-save.html
@@ -95,8 +96,11 @@ class CameraImageGalleryActivity : AppCompatActivity() {
         Log.d("hishiii", "cameraFile path: ${cameraFile.path}")
         Log.d("hishiii", "cameraFile absolutePath: ${cameraFile.absolutePath}")
 
+        fieldCameraFile = cameraFile
+    }
+
+    private fun takePicture() {
         if (cameraUri != null) {
-            fieldCameraFile = cameraFile
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri)
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)

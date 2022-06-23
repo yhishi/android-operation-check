@@ -10,6 +10,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/camera_image_button_get_external_files_dir"
+            android:textAllCaps="false"
             app:layout_constraintEnd_toStartOf="@id/mediaStoreButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -19,6 +20,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/camera_image_button_media_store"
+            android:textAllCaps="false"
             app:layout_constraintBottom_toBottomOf="@id/getExternalFilesDirButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/getExternalFilesDirButton"
