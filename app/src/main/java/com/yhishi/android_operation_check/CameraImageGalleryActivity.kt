@@ -1,10 +1,12 @@
 package com.yhishi.android_operation_check
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -43,18 +45,16 @@ class CameraImageGalleryActivity : AppCompatActivity() {
         if (result.resultCode == RESULT_OK) {
             val data = result.data
             if (data != null) {
-                fieldCameraFile?.let { file ->
-                    binding.imageView.setImageURI(cameraUri)
+                binding.imageView.setImageURI(cameraUri)
 
-                    MediaScannerConnection.scanFile(
-                        this,
-                        arrayOf(file.absolutePath),
-                        arrayOf("image/jpeg"),
-                    ) { path, uri ->
-                        Log.d("hishiii", "scanFile path: $path")
-                        Log.d("hishiii", "scanFile uri: $uri")
-                    }
-                }
+//                MediaScannerConnection.scanFile(
+//                    this,
+//                    arrayOf(file.absolutePath),
+//                    arrayOf("image/jpeg"),
+//                ) { path, uri ->
+//                    Log.d("hishiii", "scanFile path: $path")
+//                    Log.d("hishiii", "scanFile uri: $uri")
+//                }
             }
         }
     }
@@ -70,8 +70,18 @@ class CameraImageGalleryActivity : AppCompatActivity() {
             }
         }
 
-        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        binding.mediaStoreButton.setOnClickListener {
+            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                createUri()
+                takePicture()
+            }
+        }
+
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+            || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+        ) {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
     }
 
@@ -82,10 +92,8 @@ class CameraImageGalleryActivity : AppCompatActivity() {
         // 参考情報：https://developer.android.com/training/data-storage
         val directory: File? = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         Log.d("hishiii", "path: $directory")
-        val fileDate = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.JAPAN).format(Date())
-        val fileName = String.format("CameraIntent_%s.jpeg", fileDate)
 
-        val cameraFile = File(directory, fileName)
+        val cameraFile = File(directory, createImageName())
 
         cameraUri = FileProvider.getUriForFile(
             this,
@@ -97,6 +105,27 @@ class CameraImageGalleryActivity : AppCompatActivity() {
         Log.d("hishiii", "cameraFile absolutePath: ${cameraFile.absolutePath}")
 
         fieldCameraFile = cameraFile
+    }
+
+    private fun createImageName() :String {
+        val fileDate = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.JAPAN).format(Date())
+        return String.format("CameraIntent_%s.jpeg", fileDate)
+    }
+
+    private fun createUri() {
+        val fileName = createImageName()
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        val collection =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                MediaStore.Images.Media.getContentUri(
+                    MediaStore.VOLUME_EXTERNAL
+                )
+            } else {
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            }
+        cameraUri = contentResolver.insert(collection, values)
     }
 
     private fun takePicture() {
