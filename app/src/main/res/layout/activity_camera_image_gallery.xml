@@ -5,13 +5,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/text"
+        <Button
+            android:id="@+id/getExternalFilesDirButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="aaaaa"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/camera_image_button_get_external_files_dir"
+            app:layout_constraintEnd_toStartOf="@id/mediaStoreButton"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/mediaStoreButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/camera_image_button_media_store"
+            app:layout_constraintBottom_toBottomOf="@id/getExternalFilesDirButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/getExternalFilesDirButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -21,7 +31,7 @@
             android:contentDescription="@null"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text" />
+            app:layout_constraintTop_toBottomOf="@id/getExternalFilesDirButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

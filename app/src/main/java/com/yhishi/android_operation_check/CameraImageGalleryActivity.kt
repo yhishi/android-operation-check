@@ -28,7 +28,7 @@ class CameraImageGalleryActivity : AppCompatActivity() {
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                takePicture()
+                Log.d("hishiii", "camera permission granted")
             } else {
                 // TODO
             }
@@ -63,14 +63,22 @@ class CameraImageGalleryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_camera_image_gallery)
 
-        if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            takePicture()
-        } else {
+        binding.getExternalFilesDirButton.setOnClickListener {
+            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                takePicture()
+            }
+        }
+
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
     }
 
     private fun takePicture() {
+        // /storage/emulated/0/Android/data/com.yhishi.android_operation_check/files/Pictures/CameraIntent_yyyyMMdd_HHmmss.jpegに保存される
+        // アプリ固有のストレージのため、フォトやFilesの画像では確認することができない
+        // 参考情報：https://akira-watson.com/android/mediastore-save.html
+        // 参考情報：https://developer.android.com/training/data-storage
         val directory: File? = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         Log.d("hishiii", "path: $directory")
         val fileDate = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.JAPAN).format(Date())
